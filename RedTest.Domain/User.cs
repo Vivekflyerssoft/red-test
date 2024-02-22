@@ -5,15 +5,21 @@ namespace RedTest.Domain;
 
 public class User
 {
+    private readonly Beneficiaries _beneficiaries;
+
     public User()
     {
-        Beneficiaries = new Beneficiaries();
+        _beneficiaries = new Beneficiaries();
     }
 
-    public Beneficiaries Beneficiaries { get; private set; }
 
     public Result<bool> AddBeneficiary(Beneficiary beneficiary)
     {
-        return Beneficiaries.Add(beneficiary);
+        return _beneficiaries.Add(beneficiary);
+    }
+
+    public IEnumerable<Beneficiary> GetAllBeneficiaries()
+    {
+        return _beneficiaries;
     }
 }

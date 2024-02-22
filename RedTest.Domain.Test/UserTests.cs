@@ -13,7 +13,7 @@ public class UserTests
 
         user.AddBeneficiary(beneficiary);
 
-        user.Beneficiaries.Should().NotBeNull();
+        user.GetAllBeneficiaries().Should().NotBeNull();
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class UserTests
         Result<bool> result = user.AddBeneficiary(CreateFakeBeneficiary());
         result.Data.Should().BeFalse();
         result.ErrorMessage.Should().Be("Cannot add beneficiary, reached beneficiaries max limit.");
-        user.Beneficiaries.Should().HaveCount(5);
+        user.GetAllBeneficiaries().Should().HaveCount(5);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class UserTests
 
         user.AddBeneficiary(beneficiary);
 
-        user.Beneficiaries.First().Should().BeEquivalentTo(new { NickName = fake_nickname });
+        user.GetAllBeneficiaries().First().Should().BeEquivalentTo(new { NickName = fake_nickname });
     }
 
     [Fact]
@@ -54,6 +54,17 @@ public class UserTests
 
         result.Data.Should().BeFalse();
         result.ErrorMessage.Should().Be("Beneficiary nickname should have less than 20 characters.");
+    }
+
+    [Fact]
+    public void User_Should_Be_Able_To_View_All_Beneficiaries()
+    {
+        User user = new User();
+
+        user.AddBeneficiary(CreateFakeBeneficiary());
+        user.AddBeneficiary(CreateFakeBeneficiary());
+
+        user.GetAllBeneficiaries().Should().HaveCount(2);
     }
 
     Beneficiary CreateFakeBeneficiary()
