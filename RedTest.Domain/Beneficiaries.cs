@@ -24,7 +24,7 @@ public class Beneficiaries : IEnumerable<Beneficiary>
 
     public bool Add(Beneficiary beneficiary)
     {
-        if (beneficiaryList.Count == 5)
+        if (beneficiaryList.Count == 5 || beneficiary.NickName.Length > 20)
         {
             return false;
         }
