@@ -6,7 +6,7 @@ public class UserTests
     public void User_Should_Be_Able_To_Add_Beneficiaries()
     {
         User user = new User();
-        Beneficiary beneficiary = new Beneficiary();
+        Beneficiary beneficiary = CreateFakeBeneficiary();
 
         user.AddBeneficiary(beneficiary);
 
@@ -17,20 +17,31 @@ public class UserTests
     public void User_Should_Not_Be_Allowed_To_Add_More_Than_5_Beneficiary()
     {
         User user = new User();
-        Beneficiary beneficiaryOne = new Beneficiary();
-        Beneficiary beneficiaryTwo = new Beneficiary();
-        Beneficiary beneficiaryThree = new Beneficiary();
-        Beneficiary beneficiaryFour = new Beneficiary();
-        Beneficiary beneficiaryFive = new Beneficiary();
-        Beneficiary beneficiarySix = new Beneficiary();
 
-        user.AddBeneficiary(beneficiaryOne);
-        user.AddBeneficiary(beneficiaryTwo);
-        user.AddBeneficiary(beneficiaryThree);
-        user.AddBeneficiary(beneficiaryFour);
-        user.AddBeneficiary(beneficiaryFive);
+        user.AddBeneficiary(CreateFakeBeneficiary());
+        user.AddBeneficiary(CreateFakeBeneficiary());
+        user.AddBeneficiary(CreateFakeBeneficiary());
+        user.AddBeneficiary(CreateFakeBeneficiary());
+        user.AddBeneficiary(CreateFakeBeneficiary());
 
-        user.AddBeneficiary(beneficiarySix).Should().BeFalse();
+        user.AddBeneficiary(CreateFakeBeneficiary()).Should().BeFalse();
         user.Beneficiaries.Should().HaveCount(5);
     }
+
+    [Fact]
+    public void User_Beneficiary_Should_Be_Allowed_NickName()
+    {
+        User user = new User();
+        Beneficiary beneficiary = CreateFakeBeneficiary();
+
+        user.AddBeneficiary(beneficiary);
+
+        user.Beneficiaries.First().Should().BeEquivalentTo(new {NickName = "fake_nickname"});
+    }
+
+    Beneficiary CreateFakeBeneficiary()
+    {
+        return new Beneficiary("fake_nickname");
+    }
+
 }
