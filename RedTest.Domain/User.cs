@@ -9,8 +9,12 @@ public class User
     }
     public ICollection<Beneficiary> Beneficiaries { get; private set; }
 
-    public void AddBeneficiary(Beneficiary beneficiary)
+    public bool AddBeneficiary(Beneficiary beneficiary)
     {
+        if(Beneficiaries.Count == 5){
+            return false;
+        }
         Beneficiaries.Add(beneficiary);
+        return true;
     }
 }
