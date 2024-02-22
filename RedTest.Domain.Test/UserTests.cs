@@ -67,6 +67,16 @@ public class UserTests
         user.GetAllBeneficiaries().Should().HaveCount(2);
     }
 
+    [Fact]
+    public void User_Should_Be_Able_To_View_All_Topup_Options()
+    {
+        User user = new User();
+
+        IEnumerable<int> result = user.GetAvailableTopUpOptions();
+
+        result.Should().BeEquivalentTo(new List<int> { 5, 10, 20, 30, 50, 75, 100 });
+    }
+
     Beneficiary CreateFakeBeneficiary()
     {
         return CreateFakeBeneficiary(fake_nickname);

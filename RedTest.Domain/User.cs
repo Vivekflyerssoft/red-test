@@ -22,4 +22,9 @@ public class User
     {
         return _beneficiaries;
     }
+
+    public IEnumerable<int> GetAvailableTopUpOptions()
+    {
+        return new List<int> { 5, 10, 20, 30, 50, 75, 100 };
+    }
 }
