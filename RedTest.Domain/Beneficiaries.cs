@@ -4,7 +4,7 @@ namespace RedTest.Domain;
 
 public class Beneficiaries : IEnumerable<Beneficiary>
 {
-    List<Beneficiary> beneficiaryList = new List<Beneficiary>();
+    readonly List<Beneficiary> beneficiaryList = new List<Beneficiary>();
 
     public Beneficiary this[int index]
     {
@@ -22,13 +22,17 @@ public class Beneficiaries : IEnumerable<Beneficiary>
         return GetEnumerator();
     }
 
-    public bool Add(Beneficiary beneficiary)
+    public Result<bool> Add(Beneficiary beneficiary)
     {
-        if (beneficiaryList.Count == 5 || beneficiary.NickName.Length > 20)
+        if (beneficiaryList.Count == 5)
         {
-            return false;
+            return ResultFactory.Error<bool>("Cannot add beneficiary, reached beneficiaries max limit.");
+        }
+        if (beneficiary.NickName.Length > 20)
+        {
+            return ResultFactory.Error<bool>("Beneficiary nickname should have less than 20 characters.");
         }
         beneficiaryList.Add(beneficiary);
-        return true;
+        return ResultFactory.Success(true);
     }
 }

@@ -12,7 +12,7 @@ public class User
 
     public Beneficiaries Beneficiaries { get; private set; }
 
-    public bool AddBeneficiary(Beneficiary beneficiary)
+    public Result<bool> AddBeneficiary(Beneficiary beneficiary)
     {
         return Beneficiaries.Add(beneficiary);
     }
