@@ -1,4 +1,4 @@
-using System.Collections;
+
 using System.Linq;
 
 namespace RedTest.Domain;
@@ -13,7 +13,7 @@ public class User
     }
 
 
-    public Result<bool> AddBeneficiary(Beneficiary beneficiary)
+    public Result AddBeneficiary(Beneficiary beneficiary)
     {
         return _beneficiaries.Add(beneficiary);
     }
@@ -23,8 +23,17 @@ public class User
         return _beneficiaries;
     }
 
-    public IEnumerable<int> GetAvailableTopUpOptions()
+    public IEnumerable<uint> GetAvailableTopUpOptions()
     {
-        return new List<int> { 5, 10, 20, 30, 50, 75, 100 };
+        return new List<uint> { 5, 10, 20, 30, 50, 75, 100 };
+    }
+
+    public Result TopUp(Beneficiary beneficiary, uint withAmount)
+    {
+        if (!GetAvailableTopUpOptions().Any(amount => amount == withAmount))
+        {
+            return ResultFactory.Error<bool>("TopUp amount is not available. Please try with available TopUpOptions.");
+        }
+        return _beneficiaries.Contains(beneficiary);
     }
 }

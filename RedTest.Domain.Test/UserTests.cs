@@ -2,16 +2,18 @@ namespace RedTest.Domain.Test;
 
 public class UserTests
 {
-    private const string fake_nickname = "fake_nickname";
-    private const string fake_nickname_with_more_than_20_characters = "fake_nickname_more_than_twenty_characters";
+
+    private readonly User user;
+
+    public UserTests()
+    {
+        user = UserTestsFactory.CreateFakeUser();
+    }
 
     [Fact]
     public void User_Should_Be_Able_To_Add_Beneficiaries()
     {
-        User user = new User();
-        Beneficiary beneficiary = CreateFakeBeneficiary();
-
-        user.AddBeneficiary(beneficiary);
+        user.AddFakeBeneficiary();
 
         user.GetAllBeneficiaries().Should().NotBeNull();
     }
@@ -19,16 +21,14 @@ public class UserTests
     [Fact]
     public void User_Should_Not_Be_Allowed_To_Add_More_Than_5_Beneficiary()
     {
-        User user = new User();
+        user.AddFakeBeneficiary();
+        user.AddFakeBeneficiary();
+        user.AddFakeBeneficiary();
+        user.AddFakeBeneficiary();
+        user.AddFakeBeneficiary();
 
-        user.AddBeneficiary(CreateFakeBeneficiary());
-        user.AddBeneficiary(CreateFakeBeneficiary());
-        user.AddBeneficiary(CreateFakeBeneficiary());
-        user.AddBeneficiary(CreateFakeBeneficiary());
-        user.AddBeneficiary(CreateFakeBeneficiary());
-
-        Result<bool> result = user.AddBeneficiary(CreateFakeBeneficiary());
-        result.Data.Should().BeFalse();
+        Result result = user.AddBeneficiary(UserTestsFactory.CreateFakeBeneficiary());
+        result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("Cannot add beneficiary, reached beneficiaries max limit.");
         user.GetAllBeneficiaries().Should().HaveCount(5);
     }
@@ -36,33 +36,27 @@ public class UserTests
     [Fact]
     public void User_Beneficiary_Should_Have_NickName()
     {
-        User user = new User();
-        Beneficiary beneficiary = CreateFakeBeneficiary();
+        user.AddFakeBeneficiary();
 
-        user.AddBeneficiary(beneficiary);
-
-        user.GetAllBeneficiaries().First().Should().BeEquivalentTo(new { NickName = fake_nickname });
+        user.GetAllBeneficiaries().First().Should().BeEquivalentTo(new { NickName = "fake_nickname" });
     }
 
     [Fact]
     public void User_Beneficiary_Add_Should_Not_Be_Created_For_NickName_More_Than_20_Characters()
     {
-        User user = new User();
-        Beneficiary beneficiary = CreateFakeBeneficiary(fake_nickname_with_more_than_20_characters);
+        Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary("fake_nickname_more_than_twenty_characters");
 
         var result = user.AddBeneficiary(beneficiary);
 
-        result.Data.Should().BeFalse();
+        result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("Beneficiary nickname should have less than 20 characters.");
     }
 
     [Fact]
     public void User_Should_Be_Able_To_View_All_Beneficiaries()
     {
-        User user = new User();
-
-        user.AddBeneficiary(CreateFakeBeneficiary());
-        user.AddBeneficiary(CreateFakeBeneficiary());
+        user.AddFakeBeneficiary();
+        user.AddFakeBeneficiary();
 
         user.GetAllBeneficiaries().Should().HaveCount(2);
     }
@@ -70,21 +64,50 @@ public class UserTests
     [Fact]
     public void User_Should_Be_Able_To_View_All_Topup_Options()
     {
-        User user = new User();
-
-        IEnumerable<int> result = user.GetAvailableTopUpOptions();
+        IEnumerable<uint> result = user.GetAvailableTopUpOptions();
 
         result.Should().BeEquivalentTo(new List<int> { 5, 10, 20, 30, 50, 75, 100 });
     }
 
-    Beneficiary CreateFakeBeneficiary()
+    [Fact]
+    public void User_Should_Be_Allowed_To_TopUp_Beneficiary()
     {
-        return CreateFakeBeneficiary(fake_nickname);
+        user.AddFakeBeneficiary();
+
+        Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary();
+        uint withAmount = 10;
+
+        Result result = user.TopUp(beneficiary, withAmount);
+
+        result.IsSuccess.Should().BeTrue();
+
     }
 
-    Beneficiary CreateFakeBeneficiary(string nickName)
+    [Fact]
+    public void User_Should_Not_Be_Allowed_To_TopUp_Beneficiary_If_TopUp_Amount_Not_Available()
     {
-        return new Beneficiary(nickName);
+        user.AddFakeBeneficiary();
+
+        Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary();
+        uint withAmount = 15;
+
+        Result result = user.TopUp(beneficiary, withAmount);
+
+        result.IsSuccess.Should().BeFalse();
+        result.ErrorMessage.Should().Be("TopUp amount is not available. Please try with available TopUpOptions.");
     }
 
+    [Fact]
+    public void User_Should_Not_Be_Allowed_To_TopUp_An_Unknown_Beneficiary()
+    {
+        user.AddFakeBeneficiary();
+
+        Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary("fake_nickname_2");
+        uint withAmount = 10;
+
+        Result result = user.TopUp(beneficiary, withAmount);
+
+        result.IsSuccess.Should().BeFalse();
+        result.ErrorMessage.Should().Be("Please try to top up with a valid beneficiary.Please try to top up with a valid beneficiary.");
+}
 }
