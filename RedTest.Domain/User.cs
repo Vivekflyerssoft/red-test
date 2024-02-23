@@ -1,6 +1,3 @@
-
-using System.Linq;
-
 namespace RedTest.Domain;
 
 public class User
@@ -12,6 +9,7 @@ public class User
         _beneficiaries = new Beneficiaries();
     }
 
+    public bool IsVerified { get; set; }
 
     public Result AddBeneficiary(Beneficiary beneficiary)
     {
@@ -34,6 +32,12 @@ public class User
         {
             return ResultFactory.Error<bool>("TopUp amount is not available. Please try with available TopUpOptions.");
         }
-        return _beneficiaries.Contains(beneficiary);
+        Result containsBeneficiaryResult = _beneficiaries.Contains(beneficiary);
+
+        if(!containsBeneficiaryResult.IsSuccess){
+            return containsBeneficiaryResult;
+        }
+
+        return beneficiary.TopUp(withAmount, IsVerified);
     }
 }

@@ -109,5 +109,79 @@ public class UserTests
 
         result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("Please try to top up with a valid beneficiary.Please try to top up with a valid beneficiary.");
-}
+    }
+
+    [Fact]
+    public void VerifiedUser_Should_Be_Allowed_To_TopUp_UpTo_500_Per_Month_Per_Beneficiary()
+    {
+        user.Verified().AddFakeBeneficiary();
+        Beneficiary beneficiary = user.GetAllBeneficiaries().First();
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        
+        Result result = user.TopUp(beneficiary, 100);
+
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public void VerifiedUser_Should_Not_Be_Allowed_To_TopUp_More_500_Per_Month_Per_Beneficiary()
+    {
+        user.Verified().AddFakeBeneficiary();
+        Beneficiary beneficiary = user.GetAllBeneficiaries().First();
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        
+        Result result = user.TopUp(beneficiary, 5);
+
+        result.IsSuccess.Should().BeFalse();
+        result.ErrorMessage.Should().Be("TopUp failed, verified beneficiary top limit for the month is reached.");
+    }
+
+    [Fact]
+    public void UnVerifiedUser_Should_Be_Allowed_To_TopUp_UpTo_1000_Per_Month_Per_Beneficiary()
+    {
+        user.AddFakeBeneficiary();
+        Beneficiary beneficiary = user.GetAllBeneficiaries().First();
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        
+        Result result = user.TopUp(beneficiary, 100);
+
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Fact]
+    public void UnVerifiedUser_Should_Not_Be_Allowed_To_TopUp_More_1000_Per_Month_Per_Beneficiary()
+    {
+        user.AddFakeBeneficiary();
+        Beneficiary beneficiary = user.GetAllBeneficiaries().First();
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100);
+        
+        Result result = user.TopUp(beneficiary, 5);
+
+        result.IsSuccess.Should().BeFalse();
+        result.ErrorMessage.Should().Be("TopUp failed, unverified beneficiary top limit for the month is reached.");
+    }
 }

@@ -10,6 +10,12 @@ static class UserTestsFactory
         return new User();
     }
 
+    public static User Verified(this User user)
+    {
+        user.IsVerified = true;
+        return user;
+    }
+
     public static User AddFakeBeneficiary(this User user, string nickName = fake_nickname)
     {
         Beneficiary beneficiary = CreateFakeBeneficiary(nickName);
