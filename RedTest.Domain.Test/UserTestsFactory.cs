@@ -27,4 +27,10 @@ static class UserTestsFactory
     {
         return new Beneficiary(nickName);
     }
+
+    public static void TopUp(this User user, Beneficiary beneficiary, uint withAmount, int times)
+    {
+        Enumerable.Range(1, times).ToList().ForEach((_) => user.TopUp(new Recharge(beneficiary, 100)))
+        ;
+    }
 }

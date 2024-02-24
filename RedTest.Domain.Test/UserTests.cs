@@ -77,7 +77,7 @@ public class UserTests
         Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary();
         uint withAmount = 10;
 
-        Result result = user.TopUp(beneficiary, withAmount);
+        Result result = user.TopUp(new Recharge(beneficiary, withAmount));
 
         result.IsSuccess.Should().BeTrue();
 
@@ -91,7 +91,7 @@ public class UserTests
         Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary();
         uint withAmount = 15;
 
-        Result result = user.TopUp(beneficiary, withAmount);
+        Result result = user.TopUp(new Recharge(beneficiary, withAmount));
 
         result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("TopUp amount is not available. Please try with available TopUpOptions.");
@@ -105,7 +105,7 @@ public class UserTests
         Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary("fake_nickname_2");
         uint withAmount = 10;
 
-        Result result = user.TopUp(beneficiary, withAmount);
+        Result result = user.TopUp(new Recharge(beneficiary, withAmount));
 
         result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("Please try to top up with a valid beneficiary.Please try to top up with a valid beneficiary.");
@@ -116,12 +116,9 @@ public class UserTests
     {
         user.Verified().AddFakeBeneficiary();
         Beneficiary beneficiary = user.GetAllBeneficiaries().First();
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        
-        Result result = user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100, 4);
+
+        Result result = user.TopUp(new Recharge(beneficiary, 100));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -131,13 +128,9 @@ public class UserTests
     {
         user.Verified().AddFakeBeneficiary();
         Beneficiary beneficiary = user.GetAllBeneficiaries().First();
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        
-        Result result = user.TopUp(beneficiary, 5);
+        user.TopUp(beneficiary, 100, 5);
+
+        Result result = user.TopUp(new Recharge(beneficiary, 5));
 
         result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("TopUp failed, verified beneficiary top limit for the month is reached.");
@@ -148,17 +141,9 @@ public class UserTests
     {
         user.AddFakeBeneficiary();
         Beneficiary beneficiary = user.GetAllBeneficiaries().First();
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        
-        Result result = user.TopUp(beneficiary, 100);
+        user.TopUp(beneficiary, 100, 9);
+
+        Result result = user.TopUp(new Recharge(beneficiary, 100));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -168,20 +153,29 @@ public class UserTests
     {
         user.AddFakeBeneficiary();
         Beneficiary beneficiary = user.GetAllBeneficiaries().First();
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        user.TopUp(beneficiary, 100);
-        
-        Result result = user.TopUp(beneficiary, 5);
+        user.TopUp(beneficiary, 100, 10);
+
+        Result result = user.TopUp(new Recharge(beneficiary, 5));
 
         result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("TopUp failed, unverified beneficiary top limit for the month is reached.");
     }
+
+    [Fact]
+    public void User_Should_Be_Allowed_To_TopUp_Multiple_Beneficiaries()
+    {
+        user.AddFakeBeneficiary("fake_beneficiary_one").AddFakeBeneficiary("fake_beneficiary_two");
+
+        IEnumerable<Beneficiary> beneficiaries = user.GetAllBeneficiaries();
+        List<Recharge> recharges = new()
+        {
+            new(beneficiaries.First(), 10),
+            new(beneficiaries.Skip(1).First(), 10)
+        };
+        IEnumerable<Result> result = user.TopUp(recharges);
+
+        result.Should().AllBeEquivalentTo(new {IsSuccess = true});
+    }
 }
+
+

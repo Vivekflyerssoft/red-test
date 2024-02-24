@@ -1,3 +1,4 @@
+
 namespace RedTest.Domain;
 
 public class User
@@ -26,18 +27,24 @@ public class User
         return new List<uint> { 5, 10, 20, 30, 50, 75, 100 };
     }
 
-    public Result TopUp(Beneficiary beneficiary, uint withAmount)
+    public Result TopUp(Recharge recharge)
     {
-        if (!GetAvailableTopUpOptions().Any(amount => amount == withAmount))
+        if (!GetAvailableTopUpOptions().Any(amount => amount == recharge.Amount))
         {
             return ResultFactory.Error<bool>("TopUp amount is not available. Please try with available TopUpOptions.");
         }
-        Result containsBeneficiaryResult = _beneficiaries.Contains(beneficiary);
+        Result containsBeneficiaryResult = _beneficiaries.Contains(recharge.Beneficiary);
 
-        if(!containsBeneficiaryResult.IsSuccess){
+        if (!containsBeneficiaryResult.IsSuccess)
+        {
             return containsBeneficiaryResult;
         }
 
-        return beneficiary.TopUp(withAmount, IsVerified);
+        return recharge.Beneficiary.TopUp(recharge.Amount, IsVerified);
+    }
+
+    public IEnumerable<Result> TopUp(List<Recharge> recharges)
+    {
+        return recharges.Select(recharge => TopUp(recharge));
     }
 }
