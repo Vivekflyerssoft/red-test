@@ -164,17 +164,39 @@ public class UserTests
     [Fact]
     public void User_Should_Be_Allowed_To_TopUp_Multiple_Beneficiaries()
     {
-        user.AddFakeBeneficiary("fake_beneficiary_one").AddFakeBeneficiary("fake_beneficiary_two");
-
-        IEnumerable<Beneficiary> beneficiaries = user.GetAllBeneficiaries();
+        user.AddFakeBeneficiaries(2);
+        IList<Beneficiary> beneficiaries = user.GetAllBeneficiaries().ToList();
         List<Recharge> recharges = new()
         {
-            new(beneficiaries.First(), 10),
-            new(beneficiaries.Skip(1).First(), 10)
+            new(beneficiaries[0], 10),
+            new(beneficiaries[1], 10)
         };
+
         IEnumerable<Result> result = user.TopUp(recharges);
 
-        result.Should().AllBeEquivalentTo(new {IsSuccess = true});
+        result.Should().AllBeEquivalentTo(new { IsSuccess = true });
+    }
+
+    [Fact]
+    public void User_Should_Not_Be_Allowed_To_TopUp_If_Max_Limit_3000_Is_Reached_By_Sum_Of_TopUp_For_All_Beneficiaries()
+    {
+        user.AddFakeBeneficiaries(4);
+
+        IList<Beneficiary> beneficiaries = user.GetAllBeneficiaries().ToList();
+        user.TopUp(beneficiaries[0], 100, 5);
+        user.TopUp(beneficiaries[1], 100, 5);
+        user.TopUp(beneficiaries[2], 100, 10);
+        user.TopUp(beneficiaries[3], 100, 10);
+
+        List<Recharge> recharges = new()
+        {
+            new(beneficiaries[0], 10),
+            new(beneficiaries[1], 10)
+        };
+
+        IEnumerable<Result> result = user.TopUp(recharges);
+
+        result.Should().ContainSingle(x=>x.ErrorMessage == "Total recharge limit reached for all beneficiaries.");
     }
 }
 

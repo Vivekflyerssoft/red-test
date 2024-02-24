@@ -27,7 +27,24 @@ public class User
         return new List<uint> { 5, 10, 20, 30, 50, 75, 100 };
     }
 
+    public IEnumerable<Result> TopUp(List<Recharge> recharges)
+    {
+        long currentTotalTopUpValue = recharges.Sum(recharge => recharge.Amount);
+        int sumTotalOfExistingTotalForCurrentMonth = _beneficiaries.GetSumOfTopUpAmountForCurrentMonth().Data;
+        if (sumTotalOfExistingTotalForCurrentMonth + currentTotalTopUpValue > 3000)
+        {
+            return new List<Result> { ResultFactory.Error("Total recharge limit reached for all beneficiaries.") };
+        }
+        return recharges.Select(TopUpTransaction);
+    }
+
     public Result TopUp(Recharge recharge)
+    {
+        IEnumerable<Result> result = TopUp(new List<Recharge> { recharge });
+        return result.First();
+    }
+
+    private Result TopUpTransaction(Recharge recharge)
     {
         if (!GetAvailableTopUpOptions().Any(amount => amount == recharge.Amount))
         {
@@ -41,10 +58,5 @@ public class User
         }
 
         return recharge.Beneficiary.TopUp(recharge.Amount, IsVerified);
-    }
-
-    public IEnumerable<Result> TopUp(List<Recharge> recharges)
-    {
-        return recharges.Select(recharge => TopUp(recharge));
     }
 }

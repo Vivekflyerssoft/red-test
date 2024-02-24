@@ -4,7 +4,7 @@ namespace RedTest.Domain;
 
 public class Beneficiaries : IEnumerable<Beneficiary>
 {
-    readonly List<Beneficiary> beneficiaryList = new List<Beneficiary>();
+    readonly List<Beneficiary> beneficiaryList = new();
 
     public Beneficiary this[int index]
     {
@@ -40,4 +40,10 @@ public class Beneficiaries : IEnumerable<Beneficiary>
     {
         return beneficiaryList.Any(x => x.NickName == beneficiary.NickName) ? ResultFactory.Success() : ResultFactory.Error("Please try to top up with a valid beneficiary.Please try to top up with a valid beneficiary.");
     }
+
+    public Result<int> GetSumOfTopUpAmountForCurrentMonth()
+    {
+        return ResultFactory.Success((int)beneficiaryList.Sum(beneficiary => beneficiary.GetSumOfTopUpAmountForCurrentMonth()));
+    }
+
 }

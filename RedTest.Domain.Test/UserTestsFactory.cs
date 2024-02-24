@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace RedTest.Domain.Test;
 
 static class UserTestsFactory
@@ -23,6 +25,17 @@ static class UserTestsFactory
         return user;
     }
 
+    public static User AddFakeBeneficiaries(this User user, int count)
+    {
+        Enumerable.Range(1, count).ToList().ForEach(index =>
+        {
+
+            Beneficiary beneficiary = CreateFakeBeneficiary($"{fake_nickname}_{index}");
+            user.AddBeneficiary(beneficiary);
+        });
+        return user;
+    }
+
     public static Beneficiary CreateFakeBeneficiary(string nickName = fake_nickname)
     {
         return new Beneficiary(nickName);
@@ -30,7 +43,9 @@ static class UserTestsFactory
 
     public static void TopUp(this User user, Beneficiary beneficiary, uint withAmount, int times)
     {
-        Enumerable.Range(1, times).ToList().ForEach((_) => user.TopUp(new Recharge(beneficiary, 100)))
-        ;
+        Enumerable.Range(0, times).ToList().ForEach((index) =>
+        {
+            user.TopUp(new Recharge(beneficiary, withAmount));
+        });
     }
 }

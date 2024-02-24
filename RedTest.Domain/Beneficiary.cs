@@ -27,7 +27,7 @@ public class Beneficiary
 
     private Result EligibleForTopUp(uint withAmount, bool isVerifiedUser)
     {
-        uint sumOfTopUpAmountForCurrentMonth = _topUps.GetCurrentMonthTotalTopUpAmount() + withAmount;
+        uint sumOfTopUpAmountForCurrentMonth = GetSumOfTopUpAmountForCurrentMonth() + withAmount;
         if (isVerifiedUser && sumOfTopUpAmountForCurrentMonth > VERIFIED_USER_BENEFICIARY_TOPUP_MAX_LIMIT)
         {
             return ResultFactory.Error("TopUp failed, verified beneficiary top limit for the month is reached.");
@@ -37,6 +37,11 @@ public class Beneficiary
             return ResultFactory.Error("TopUp failed, unverified beneficiary top limit for the month is reached.");
         }
         return ResultFactory.Success();
+    }
+
+    public uint GetSumOfTopUpAmountForCurrentMonth()
+    {
+        return _topUps.GetCurrentMonthTotalTopUpAmount();
     }
 }
 
