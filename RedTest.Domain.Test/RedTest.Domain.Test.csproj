@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RedTest.Domain\RedTest.Domain.csproj" />
+    <ProjectReference Include="..\RedTest.Shared\RedTest.Shared.csproj" />
   </ItemGroup>
 
 </Project>

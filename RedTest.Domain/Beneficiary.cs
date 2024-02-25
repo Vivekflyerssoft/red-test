@@ -1,10 +1,13 @@
+using RedTest.Shared;
+
 namespace RedTest.Domain;
 
 public class Beneficiary
 {
+    private readonly TopUpList _topUps;
+
     private const int VERIFIED_USER_BENEFICIARY_TOPUP_MAX_LIMIT = 500;
     private const int UNVERIFIED_USER_BENEFICIARY_TOPUP_MAX_LIMIT = 1000;
-    private readonly TopUpList _topUps;
 
     public string NickName { get; set; }
 

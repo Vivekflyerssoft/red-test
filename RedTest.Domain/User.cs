@@ -1,4 +1,6 @@
 
+using RedTest.Shared;
+
 namespace RedTest.Domain;
 
 public class User

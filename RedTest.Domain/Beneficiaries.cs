@@ -1,10 +1,17 @@
+using RedTest.Shared;
+using RedTest.Shared.Repositories;
 using System.Collections;
 
 namespace RedTest.Domain;
 
 public class Beneficiaries : IEnumerable<Beneficiary>
 {
-    readonly List<Beneficiary> beneficiaryList = new();
+    readonly List<Beneficiary> beneficiaryList;
+
+    public Beneficiaries()
+    {
+        beneficiaryList = new();
+    }
 
     public Beneficiary this[int index]
     {

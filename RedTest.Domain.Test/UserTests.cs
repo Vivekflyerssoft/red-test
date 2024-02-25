@@ -1,3 +1,5 @@
+using RedTest.Shared;
+
 namespace RedTest.Domain.Test;
 
 public class UserTests

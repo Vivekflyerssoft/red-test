@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\RedTest.Shared\RedTest.Shared.csproj" />
-  </ItemGroup>
-
 </Project>

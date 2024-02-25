@@ -1,4 +1,4 @@
-namespace RedTest.Domain;
+namespace RedTest.Shared;
 
 public class Result<T> : Result
 {
