@@ -4,5 +4,7 @@
     {
         public int Id { get; set; }
         public required string Name { get; set; }
+        public int Balance { get; set; }
+        public bool IsVerified { get; set; }
     }
 }

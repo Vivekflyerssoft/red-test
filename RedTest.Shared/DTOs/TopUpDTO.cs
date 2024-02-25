@@ -2,7 +2,7 @@
 {
     public class TopUpDTO
     {
-        public TopUpBeneficiaryDTO Beneficiary { get; set; }
+        public BeneficiaryDTO Beneficiary { get; set; }
         public uint Amount { get; set; }
     }
 }

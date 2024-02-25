@@ -16,7 +16,7 @@ namespace RedTest.Domain.Services
 
         public async Task<Result<UserDTO>> Create(UserDTO user)
         {
-            var dbResult = await _userRepository.Create(new Shared.Entities.User { Name = user.Name });
+            var dbResult = await _userRepository.Create(new Shared.Entities.User { Name = user.Name, Balance = user.Balance, IsVerified = user.IsVerified });
 
             if (!dbResult.IsSuccess)
             {

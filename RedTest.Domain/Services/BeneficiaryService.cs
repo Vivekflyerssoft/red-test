@@ -24,7 +24,7 @@ namespace RedTest.Domain.Services
                 return ResultFactory.Error<IEnumerable<BeneficiaryDTO>>("User not found.");
             }
             var domainModel = await _beneficiariesRepository.GetAllBeneficiariesFor(userId);
-            return ResultFactory.Success(domainModel.Select(dm => new BeneficiaryDTO { NickName = dm.NickName, Id = dm.Id, UserId = dm.UserId }));
+            return ResultFactory.Success(domainModel.Select(dm => new BeneficiaryDTO { NickName = dm.NickName, Id = dm.Id }));
         }
 
         public async Task<Result<BeneficiaryDTO>> Create(int userId, BeneficiaryDTO beneficiary)
