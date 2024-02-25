@@ -39,13 +39,7 @@ namespace RedTest.Repositories.Repositories
             return ResultFactory.Success(dbResult);
         }
 
-        public async Task<Result<IEnumerable<Beneficiary>>> GetBeneficiaries(int id)
-        {
-            var user = await _users.FirstOrDefaultAsync(u => u.Id == id);
-            return ResultFactory.Success(user?.Beneficiaries ?? Enumerable.Empty<Beneficiary>());
-        }
-
-        public async Task<Result<User>> Create(User user)
+         public async Task<Result<User>> Create(User user)
         {
             if (await IsUserExist(user.Name))
             {

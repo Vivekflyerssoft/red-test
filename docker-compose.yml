@@ -16,7 +16,7 @@ services:
     environment:
       POSTGRES_PASSWORD: example
     volumes:
-      - pgdata:/var/lib/postgresql/datapostgres
+      - pgdata:/var/lib/postgresql/red_datapostgres
 
 volumes:
   pgdata:

@@ -10,11 +10,13 @@ namespace RedTest.Domain.Services
     {
         private readonly ITopUpRepository _topUpRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IBeneficiaryRepository _beneficiaryRepository;
 
-        public TopUpService(ITopUpRepository topUpRepository, IUserRepository userRepository)
+        public TopUpService(ITopUpRepository topUpRepository, IUserRepository userRepository, IBeneficiaryRepository beneficiaryRepository)
         {
             _topUpRepository = topUpRepository ?? throw new ArgumentNullException(nameof(topUpRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _beneficiaryRepository = beneficiaryRepository ?? throw new ArgumentNullException(nameof(beneficiaryRepository));
         }
         public IEnumerable<uint> GetAvailableTopUpOptions()
         {
@@ -29,13 +31,13 @@ namespace RedTest.Domain.Services
                 return new List<Result> { userResult };
             }
 
-            var beneficiariesResult = await _userRepository.GetBeneficiaries(userId);
-            if (!beneficiariesResult.IsSuccess)
+            var beneficiariesResult = await _beneficiaryRepository.GetAllBeneficiariesFor(userId);
+            if (!beneficiariesResult.Any())
             {
-                return new List<Result> { beneficiariesResult };
+                return new List<Result> { ResultFactory.Error("No beneficiaries found.") };
             }
 
-            List<Shared.Entities.Beneficiary> beneficiariesData = beneficiariesResult.Data!.ToList();
+            List<Shared.Entities.Beneficiary> beneficiariesData = beneficiariesResult!.ToList();
 
             User userDM = new()
             {

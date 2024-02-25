@@ -15,12 +15,14 @@ namespace RedTest.Domain.Test
         private readonly TopUpService _sut;
         private readonly ITopUpRepository _topUpRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IBeneficiaryRepository _beneficiaryRepository;
 
         public TopUpServiceTests()
         {
             _topUpRepository = Substitute.For<ITopUpRepository>();
             _userRepository = Substitute.For<IUserRepository>();
-            _sut = new TopUpService(_topUpRepository, _userRepository);
+            _beneficiaryRepository = Substitute.For<IBeneficiaryRepository>();
+            _sut = new TopUpService(_topUpRepository, _userRepository, _beneficiaryRepository);
         }
 
         [Fact]
