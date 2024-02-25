@@ -1,6 +1,6 @@
 using RedTest.Shared;
 
-namespace RedTest.Domain;
+namespace RedTest.Domain.Models;
 
 public class Beneficiary
 {
@@ -8,6 +8,8 @@ public class Beneficiary
 
     private const int VERIFIED_USER_BENEFICIARY_TOPUP_MAX_LIMIT = 500;
     private const int UNVERIFIED_USER_BENEFICIARY_TOPUP_MAX_LIMIT = 1000;
+
+    public int Id { get; set; }
 
     public string NickName { get; set; }
 
@@ -17,15 +19,22 @@ public class Beneficiary
         _topUps = new TopUpList();
     }
 
-    public Result TopUp(uint withAmount, bool isVerifiedUser)
+    public Beneficiary(int id, string nickName, List<uint> topUpsForCurrentMonth)
+    {
+        Id = id;
+        NickName = nickName;
+        _topUps = new TopUpList(topUpsForCurrentMonth);
+    }
+
+    public Result<Recharge> TopUp(uint withAmount, bool isVerifiedUser)
     {
         Result validationResult = EligibleForTopUp(withAmount, isVerifiedUser);
         if (!validationResult.IsSuccess)
         {
-            return validationResult;
+            return ResultFactory.Error<Recharge>(validationResult.ErrorMessage);
         }
         _topUps.Add(withAmount);
-        return ResultFactory.Success();
+        return ResultFactory.Success(new Recharge(Id, withAmount));
     }
 
     private Result EligibleForTopUp(uint withAmount, bool isVerifiedUser)
@@ -48,4 +57,4 @@ public class Beneficiary
     }
 }
 
-public record Recharge(Beneficiary Beneficiary, uint Amount);
+public record Recharge(int BeneficiaryId, uint Amount);

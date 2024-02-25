@@ -7,7 +7,7 @@ namespace RedTest.Shared.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int BeneficiaryId { get; set; }
-        public required Beneficiary Beneficiary { get; set; }
+        public Beneficiary Beneficiary { get; set; }
         public uint Amount { get; set; }
         public required DateTime DateCreated { get; set; }
     }

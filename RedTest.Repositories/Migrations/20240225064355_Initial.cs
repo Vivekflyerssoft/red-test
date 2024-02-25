@@ -53,7 +53,7 @@ namespace RedTest.Repositories.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     BeneficiaryId = table.Column<int>(type: "integer", nullable: false),
                     Amount = table.Column<long>(type: "bigint", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "getdate()")
+                    DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

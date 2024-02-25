@@ -1,3 +1,4 @@
+using RedTest.Domain.Models;
 using RedTest.Shared;
 
 namespace RedTest.Domain.Test;
@@ -9,7 +10,7 @@ public class UserTests
 
     public UserTests()
     {
-        user = UserTestsFactory.CreateFakeUser();
+        user = UserTestsFactory.CreateFakeUser().WithInitialBalance(5000);
     }
 
     [Fact]
@@ -64,25 +65,15 @@ public class UserTests
     }
 
     [Fact]
-    public void User_Should_Be_Able_To_View_All_Topup_Options()
-    {
-        IEnumerable<uint> result = user.GetAvailableTopUpOptions();
-
-        result.Should().BeEquivalentTo(new List<int> { 5, 10, 20, 30, 50, 75, 100 });
-    }
-
-    [Fact]
     public void User_Should_Be_Allowed_To_TopUp_Beneficiary()
     {
-        user.AddFakeBeneficiary();
-
         Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary();
+        user.AddBeneficiary(beneficiary);
         uint withAmount = 10;
 
-        Result result = user.TopUp(new Recharge(beneficiary, withAmount));
+        Result result = user.TopUp(new Recharge(beneficiary.Id, withAmount));
 
         result.IsSuccess.Should().BeTrue();
-
     }
 
     [Fact]
@@ -93,7 +84,7 @@ public class UserTests
         Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary();
         uint withAmount = 15;
 
-        Result result = user.TopUp(new Recharge(beneficiary, withAmount));
+        Result result = user.TopUp(new Recharge(beneficiary.Id, withAmount));
 
         result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("TopUp amount is not available. Please try with available TopUpOptions.");
@@ -107,7 +98,7 @@ public class UserTests
         Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary("fake_nickname_2");
         uint withAmount = 10;
 
-        Result result = user.TopUp(new Recharge(beneficiary, withAmount));
+        Result result = user.TopUp(new Recharge(beneficiary.Id, withAmount));
 
         result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("Please try to top up with a valid beneficiary.Please try to top up with a valid beneficiary.");
@@ -120,7 +111,7 @@ public class UserTests
         Beneficiary beneficiary = user.GetAllBeneficiaries().First();
         user.TopUp(beneficiary, 100, 4);
 
-        Result result = user.TopUp(new Recharge(beneficiary, 100));
+        Result result = user.TopUp(new Recharge(beneficiary.Id, 100));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -132,7 +123,7 @@ public class UserTests
         Beneficiary beneficiary = user.GetAllBeneficiaries().First();
         user.TopUp(beneficiary, 100, 5);
 
-        Result result = user.TopUp(new Recharge(beneficiary, 5));
+        Result result = user.TopUp(new Recharge(beneficiary.Id, 5));
 
         result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("TopUp failed, verified beneficiary top limit for the month is reached.");
@@ -145,7 +136,7 @@ public class UserTests
         Beneficiary beneficiary = user.GetAllBeneficiaries().First();
         user.TopUp(beneficiary, 100, 9);
 
-        Result result = user.TopUp(new Recharge(beneficiary, 100));
+        Result result = user.TopUp(new Recharge(beneficiary.Id, 100));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -157,7 +148,7 @@ public class UserTests
         Beneficiary beneficiary = user.GetAllBeneficiaries().First();
         user.TopUp(beneficiary, 100, 10);
 
-        Result result = user.TopUp(new Recharge(beneficiary, 5));
+        Result result = user.TopUp(new Recharge(beneficiary.Id, 5));
 
         result.IsSuccess.Should().BeFalse();
         result.ErrorMessage.Should().Be("TopUp failed, unverified beneficiary top limit for the month is reached.");
@@ -170,8 +161,8 @@ public class UserTests
         IList<Beneficiary> beneficiaries = user.GetAllBeneficiaries().ToList();
         List<Recharge> recharges = new()
         {
-            new(beneficiaries[0], 10),
-            new(beneficiaries[1], 10)
+            new(beneficiaries[0].Id, 10),
+            new(beneficiaries[1].Id, 10)
         };
 
         IEnumerable<Result> result = user.TopUp(recharges);
@@ -192,13 +183,27 @@ public class UserTests
 
         List<Recharge> recharges = new()
         {
-            new(beneficiaries[0], 10),
-            new(beneficiaries[1], 10)
+            new(beneficiaries[0].Id, 10),
+            new(beneficiaries[1].Id, 10)
         };
 
         IEnumerable<Result> result = user.TopUp(recharges);
 
         result.Should().ContainSingle(x=>x.ErrorMessage == "Total recharge limit reached for all beneficiaries.");
+    }
+
+    [Fact]
+    public void User_With_Low_Balance_Should_Not_Be_Allowed_To_TopUp_Beneficiary()
+    {
+        Beneficiary beneficiary = UserTestsFactory.CreateFakeBeneficiary();
+        user.WithInitialBalance(5);
+        user.AddBeneficiary(beneficiary);
+        uint withAmount = 10;
+
+        Result result = user.TopUp(new Recharge(beneficiary.Id, withAmount));
+
+        result.IsSuccess.Should().BeFalse();
+        result.ErrorMessage.Should().Be("User has low balance.");
     }
 }
 

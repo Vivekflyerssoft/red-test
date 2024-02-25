@@ -12,7 +12,7 @@ using RedTest.Repositories;
 namespace RedTest.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240224205348_Initial")]
+    [Migration("20240225064355_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -62,9 +62,7 @@ namespace RedTest.Repositories.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("getdate()");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 

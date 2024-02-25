@@ -1,3 +1,4 @@
+using RedTest.Domain;
 using RedTest.Repositories;
 
 namespace RedTest.TopUp.API
@@ -15,6 +16,7 @@ namespace RedTest.TopUp.API
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddRepositoryDependencies(builder.Configuration.GetConnectionString("Default"));
+            builder.Services.AddDomainDependencies();
 
             var app = builder.Build();
 

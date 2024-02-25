@@ -3,26 +3,34 @@ using RedTest.Domain;
 using RedTest.Shared;
 using RedTest.Shared.DTOs;
 using RedTest.Shared.Entities;
+using RedTest.Shared.Services;
 using System.Net;
 
 namespace RedTest.TopUp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TopUpController : ControllerBase
+    public class TopUpController : ApiBaseController<TopUpController>
     {
-        [HttpGet("/AvailableOptions")]
+        private readonly ITopUpService _topUpService;
+
+        public TopUpController(ITopUpService topUpService, ILogger<TopUpController> logger): base(logger)
+        {
+            _topUpService = topUpService ?? throw new ArgumentNullException(nameof(topUpService));
+        }
+
+        [HttpGet("AvailableOptions")]
         [ProducesResponseType(typeof(List<uint>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTopUpOptions()
         {
-            return Ok(new List<uint> { 5, 10, 20, 30, 50, 75, 100 });
+            return Ok(_topUpService.GetAvailableTopUpOptions());
         }
 
-        [HttpPost]
+        [HttpPost("User/{userId}")]
         [ProducesResponseType(typeof(List<Result>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Post(TopUpDTO topUp)
+        public async Task<IActionResult> Post(int userId, IEnumerable<TopUpDTO> topUps)
         {
-            return null;
+            return Ok(await _topUpService.TopUp(userId, topUps));
         }
     }
 }

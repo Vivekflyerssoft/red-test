@@ -2,9 +2,9 @@
 
 namespace RedTest.Shared.Repositories
 {
-    public interface IBeneficiariesRepository
+    public interface IBeneficiaryRepository
     {
-        Task<bool> Add(Beneficiary beneficiary);
+        Task<Result<Beneficiary>> Add(Beneficiary beneficiary);
         Task<IEnumerable<Beneficiary>> GetAllBeneficiariesFor(int userId);
     }
 }

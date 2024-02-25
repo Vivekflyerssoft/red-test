@@ -8,8 +8,7 @@ namespace RedTest.Shared.Entities
         public int Id { get; set; }
         public required string NickName { get; set; }
         public int UserId { get; set; }
-        public required User User { get; set; }
-
+        public User User { get; set; }
         public ICollection<TopUp>? TopUps { get; set; }
     }
 }

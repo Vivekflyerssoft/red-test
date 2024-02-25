@@ -8,5 +8,7 @@ namespace RedTest.Shared.Entities
         public int Id { get; set; }
         public required string Name { get; set; }
         public ICollection<Beneficiary>? Beneficiaries { get; set; }
+        public bool IsVerified { get; set; }
+        public int Balance { get; set; }
     }
 }

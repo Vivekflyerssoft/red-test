@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using RedTest.Domain.Models;
 
 namespace RedTest.Domain.Test;
 
@@ -18,9 +18,15 @@ static class UserTestsFactory
         return user;
     }
 
+    public static User WithInitialBalance(this User user, int balance)
+    {
+        user.Balance = balance;
+        return user;
+    }
+
     public static User AddFakeBeneficiary(this User user, string nickName = fake_nickname)
     {
-        Beneficiary beneficiary = CreateFakeBeneficiary(nickName);
+        Beneficiary beneficiary = CreateFakeBeneficiary(nickName, user.Beneficiaries.Count());
         user.AddBeneficiary(beneficiary);
         return user;
     }
@@ -30,22 +36,22 @@ static class UserTestsFactory
         Enumerable.Range(1, count).ToList().ForEach(index =>
         {
 
-            Beneficiary beneficiary = CreateFakeBeneficiary($"{fake_nickname}_{index}");
+            Beneficiary beneficiary = CreateFakeBeneficiary($"{fake_nickname}_{index}", index + 1);
             user.AddBeneficiary(beneficiary);
         });
         return user;
     }
 
-    public static Beneficiary CreateFakeBeneficiary(string nickName = fake_nickname)
+    public static Beneficiary CreateFakeBeneficiary(string nickName = fake_nickname, int id = 1)
     {
-        return new Beneficiary(nickName);
+        return new Beneficiary(nickName) { Id = id };
     }
 
     public static void TopUp(this User user, Beneficiary beneficiary, uint withAmount, int times)
     {
         Enumerable.Range(0, times).ToList().ForEach((index) =>
         {
-            user.TopUp(new Recharge(beneficiary, withAmount));
+            user.TopUp(new Recharge(beneficiary.Id, withAmount));
         });
     }
 }

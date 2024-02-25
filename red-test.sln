@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedTest.Domain", "RedTest.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedTest.Domain.Test", "RedTest.Domain.Test\RedTest.Domain.Test.csproj", "{8D5187C1-28F5-4790-B71F-115216BDE339}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedTest.TopUp.API", "RedTest.TopUp.API\RedTest.TopUp.API.csproj", "{74D72D54-6CD7-4D62-AA0B-35888C1B0F39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedTest.TopUp.API", "RedTest.TopUp.API\RedTest.TopUp.API.csproj", "{74D72D54-6CD7-4D62-AA0B-35888C1B0F39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedTest.Repositories", "RedTest.Repositories\RedTest.Repositories.csproj", "{F710BC1B-58A0-4B13-A596-C6250294E695}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedTest.Repositories", "RedTest.Repositories\RedTest.Repositories.csproj", "{F710BC1B-58A0-4B13-A596-C6250294E695}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedTest.Shared", "RedTest.Shared\RedTest.Shared.csproj", "{67A1CB1E-1506-463B-878C-AE077CBA3788}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedTest.Shared", "RedTest.Shared\RedTest.Shared.csproj", "{67A1CB1E-1506-463B-878C-AE077CBA3788}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{B2C70EBB-FA75-4CD7-96BE-DC6E3C3A0163}"
 EndProject
