@@ -8,6 +8,8 @@ services:
       dockerfile: RedTest.TopUp.API/Dockerfile
     depends_on:
     - db
+    networks:
+    - red-network
   db:
     image: postgres
     restart: always
@@ -17,6 +19,11 @@ services:
       POSTGRES_PASSWORD: example
     volumes:
       - pgdata:/var/lib/postgresql/red_datapostgres
+    networks:
+    - red-network
 
 volumes:
   pgdata:
+
+networks:
+  red-network:
