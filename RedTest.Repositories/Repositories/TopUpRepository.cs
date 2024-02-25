@@ -25,7 +25,8 @@ namespace RedTest.Repositories.Repositories
 
         public async Task<bool> TopUp(User user, IEnumerable<TopUp> topUpList)
         {
-            int totalTopUpAmount = (int)topUpList.Sum(x => x.Amount);
+            int tranasactionFees = topUpList.Count();
+            int totalTopUpAmount = (int)topUpList.Sum(x => x.Amount) + tranasactionFees;
             user.Balance -= totalTopUpAmount;
             _users.Update(user);
 

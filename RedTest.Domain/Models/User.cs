@@ -41,7 +41,8 @@ public class User
 
     public IEnumerable<Result<Recharge>> TopUp(List<Recharge> recharges)
     {
-        if (Balance < recharges.Sum(x => x.Amount))
+        int transaction_fees = recharges.Capacity;
+        if (Balance < (recharges.Sum(x => x.Amount) + transaction_fees))
         {
             return new List<Result<Recharge>> { ResultFactory.Error<Recharge>("User has low balance.") };
         }
